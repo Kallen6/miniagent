@@ -1,0 +1,35 @@
+# Virtualenv (project venv lives in miniagt/, contains thousands of .py/.pyc)
+miniagt/
+venv/
+.venv/
+env/
+
+# Python cache / build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+
+# Secrets (agent/.env contains API_KEY, DS_URL)
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs & runtime output
+*.log
+logs/
+
+# CdpTools is a separate git repo (has its own .git). Track it as a submodule
+# or delete its inner .git before adding it here.
+CdpTools/
