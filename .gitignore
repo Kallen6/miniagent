@@ -1,4 +1,4 @@
-# Virtualenv (project venv lives in miniagt/, contains thousands of .py/.pyc)
+# Virtualenv (project venv lives in miniagt/)
 miniagt/
 venv/
 .venv/
@@ -29,7 +29,3 @@ Thumbs.db
 # Logs & runtime output
 *.log
 logs/
-
-# CdpTools is a separate git repo (has its own .git). Track it as a submodule
-# or delete its inner .git before adding it here.
-CdpTools/
