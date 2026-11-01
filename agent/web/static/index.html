@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>miniagent · agent 决策可视化</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <div class="brand">miniagent<span class="sub">agent 决策可视化</span></div>
+  <div class="controls">
+    <label for="role-select">角色</label>
+    <select id="role-select" title="切换角色会重置会话历史"></select>
+    <span id="conn-status" class="conn"><i class="dot"></i><em id="conn-text">连接中…</em></span>
+    <button id="trace-toggle" title="显示/隐藏执行时间线">时间线</button>
+  </div>
+</header>
+
+<div class="layout" id="layout">
+  <main id="chat">
+    <div id="messages">
+      <div class="welcome">开始对话后，agent 的思考与工具调用步骤将在右侧时间线逐步展示。</div>
+    </div>
+  </main>
+
+  <aside id="trace">
+    <div class="trace-head">
+      <span>执行时间线</span>
+      <span class="trace-tip">思考 / 调用 / 结果</span>
+    </div>
+    <div id="timeline">
+      <div class="trace-empty">暂无执行记录</div>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <textarea id="input" rows="1" placeholder="输入消息，Enter 发送，Shift+Enter 换行"></textarea>
+  <button id="send">发送</button>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

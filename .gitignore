@@ -29,3 +29,18 @@ Thumbs.db
 # Logs & runtime output
 *.log
 logs/
+
+# Dev-notes / phase summaries (not shipped code)
+mkd/
+
+# SQLite demo databases (runtime artifacts)
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+
+mkd/
+tests/
+
+.codebuddy/

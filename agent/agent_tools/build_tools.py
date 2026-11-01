@@ -56,16 +56,5 @@ def get_tools() -> list[dict]:
 def get_registry() -> dict:
     return dict(_TOOL_REGISTRY)
 
-@tool(description="this is a function to execute the shell command")
-def t1(command:str=None)->str:
-    print("this is t1")
-
-@tool(description="this is a")
-def t2():
-    ...
-    print("this is t2")
-
-if __name__=="__main__":
-    ...
 
     
