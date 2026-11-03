@@ -4,11 +4,16 @@
 
 | 目录 | 说明 |
 |---|---|
+<<<<<<< HEAD
 | `agent/` | 基于 OpenAI SDK 的轻量 function-calling Agent（接入 DeepSeek，不使用 langchain） |
+=======
+| `agent/` | 基于 OpenAI SDK 的轻量 function-calling Agent（接入 DeepSeek） |
+>>>>>>> d586de25e2659d1a5a2e2f8131cb8c73f7cef26b
 | `CdpTools/` | 基于 Chrome DevTools Protocol 的网页元素拾取 + 流程编排 + 多进程执行工具 |
 
 ```
 miniagent/
+<<<<<<< HEAD
 ├── agent/                  # Agent 主体（Python 包，相对导入）
 │   ├── agent_tools/
 │   │   ├── build_tools.py      # @tool 装饰器 + Schema 自动生成 + 工具注册
@@ -35,11 +40,30 @@ miniagent/
 ├── main.py                 # 统一入口：python main.py
 ├── CdpTools/               # CDP 工具（详见 CdpTools/README.md）
 └── requirements.txt        # 全项目依赖，分组管理
+=======
+├── agent/                  # Agent 主体
+│   ├── main.py             # 入口：LLM 客户端 + 对话
+│   ├── build_tools.py      # @tool 装饰器 + Schema 自动生成 + 工具注册
+│   ├── command_exec.py     # 执行 shell 命令并打印结果
+│   └── .env                # 密钥（已被 git 忽略，不入仓）
+├── CdpTools/               # CDP 工具（详见 CdpTools/README.md）
+│   ├── capture/            # 元素捕获器（PyQt5 桌面程序）
+│   ├── cdp_flow/           # 流程编排库 Browser / Tab / Element
+│   ├── utils/              # log() / setup() 日志工具
+│   └── examples/           # 可运行示例
+├── requirements.txt        # 全项目依赖，分组管理
+├── .gitignore
+└── miniagt/                # Python 虚拟环境（已被 git 忽略，不入仓）
+>>>>>>> d586de25e2659d1a5a2e2f8131cb8c73f7cef26b
 ```
 
 ## 环境要求
 
+<<<<<<< HEAD
 - Python 3.12
+=======
+- Python 3.12（仓库自带的 `miniagt/` 是 3.12.10）
+>>>>>>> d586de25e2659d1a5a2e2f8131cb8c73f7cef26b
 - `CdpTools` 的捕获器需要图形界面，浏览器需 Chrome / Edge
 
 ## 安装
@@ -60,7 +84,11 @@ pip install -r requirements.txt
 
 ### 配置密钥
 
+<<<<<<< HEAD
 复制 `agent/.env.example` 为 `agent/.env` 并填写（该文件已被 `.gitignore` 忽略，不要提交）：
+=======
+在 `agent/.env` 中填写（该文件已被 `.gitignore` 忽略，不要提交）：
+>>>>>>> d586de25e2659d1a5a2e2f8131cb8c73f7cef26b
 
 ```ini
 API_KEY=sk-xxxxxxxxxxxxxxxx
@@ -70,6 +98,7 @@ DS_URL=https://api.deepseek.com
 ### 运行
 
 ```bash
+<<<<<<< HEAD
 python main.py
 ```
 
@@ -110,12 +139,48 @@ WebSocket：连接 `ws://127.0.0.1:8000/ws/chat`，发送 `{"message": "...", "r
 python -m unittest tests.test_phase2_3 -v        # DB/工作流/意图/Prompt 单元测试
 python tests/test_phase4_6_smoke.py              # 服务冒烟测试（自动起停）
 ```
+=======
+cd agent
+python main.py
+```
+
+`main.py` 里用 `load_dotenv()` 读取 `.env`，它从**当前工作目录**向上查找，所以要在 `agent/` 目录下运行，否则读不到密钥。
+
+### 三个模块
+
+| 文件 | 作用 |
+|---|---|
+| `build_tools.py` | `@tool` 装饰器：从函数签名和类型注解自动生成 OpenAI function-calling 的 JSON Schema，并自动注册到工具表；`get_tools()` 返回 Schema 列表，`get_registry()` 返回 `{名称: 函数}` |
+| `command_exec.py` | `exec_cmd(cmd)` 执行 shell 命令，打印 `[exit]` / `[stdout]` / `[stderr]` |
+| `main.py` | `create_llm()` 用 `API_KEY` / `DS_URL` 建客户端；`get_llm_res()` 调用 `deepseek-flash`（开启思考模式） |
+
+### 自定义工具
+
+```python
+from build_tools import tool, get_tools, get_registry
+from command_exec import exec_cmd
+
+@tool(
+    description="执行一条 shell 命令",
+    param_descriptions={"command": "要执行的命令，例如 ipconfig"},
+)
+def run_command(command: str) -> str:
+    exec_cmd(command)
+    return "done"
+
+print(get_tools())      # 交给 LLM 的 tools 参数
+print(get_registry())   # 名称 → 可执行函数，回调时用
+```
+
+参数类型会按注解映射成 JSON Schema 类型（`str` → `string`、`int` → `integer`、`bool` → `boolean` …），没有默认值的参数标记为 `required`。
+>>>>>>> d586de25e2659d1a5a2e2f8131cb8c73f7cef26b
 
 ### 当前进度
 
 - [x] 工具 Schema 自动生成与注册
 - [x] 命令执行工具
 - [x] LLM 客户端与单轮对话
+<<<<<<< HEAD
 - [x] `run_agent()`：多轮对话 + 工具回调 + 流式思考可视化
 - [x] 通用数据库查询工具（`agent/dbase`）
 - [x] 工作流注册与占位示例（`agent/workflows`）
@@ -123,6 +188,10 @@ python tests/test_phase4_6_smoke.py              # 服务冒烟测试（自动�
 - [x] Web 可视化对话页（`agent/web`）
 - [x] 对外异步服务接口（`agent/service`）
 - [ ] 意图识别接入真实模型（接口已占位）
+=======
+- [ ] `agent_loop()`：多轮对话 + 工具回调的循环（尚未实现）
+- [ ] 流式输出
+>>>>>>> d586de25e2659d1a5a2e2f8131cb8c73f7cef26b
 
 ## CdpTools
 
@@ -146,5 +215,9 @@ tab.group("demo").element("search_input").input_text("hello")
 ## 注意事项
 
 - `miniagt/` 是虚拟环境，**不要提交**；
+<<<<<<< HEAD
 - `agent/.env` 含真实密钥，**不要提交**，分享时只给 `agent/.env.example`；
+=======
+- `agent/.env` 含真实密钥，**不要提交**，分享时只给 `agent/.env.example`（只写键名）；
+>>>>>>> d586de25e2659d1a5a2e2f8131cb8c73f7cef26b
 - 元素库 JSON 里可能包含页面 URL、业务数据，提交前检查或脱敏。
