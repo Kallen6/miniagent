@@ -143,9 +143,4 @@ tab.group("demo").element("search_input").input_text("hello")
 
 完整说明（元素库格式、API 速查、多进程规则、常见问题）见 [`CdpTools/README.md`](CdpTools/README.md)。
 
-## 注意事项
 
-- `miniagt/` 是虚拟环境，**不要提交**；
-- `agent/.env` 含真实密钥，**不要提交**，分享时只给 `agent/.env.example`；
-- `mkd/` 是阶段性开发笔记，已被 `.gitignore` 忽略；
-- 元素库 JSON 里可能包含页面 URL、业务数据，提交前检查或脱敏。
