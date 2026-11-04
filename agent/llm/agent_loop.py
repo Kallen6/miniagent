@@ -2,8 +2,10 @@ import json
 from dataclasses import dataclass, asdict
 from typing import Callable, Literal
 
-from ..agent_tools.build_tools import get_registry
+from ..agent_tools.build_tools import get_registry, get_tool_meta
 from ..dbase import query_database  # noqa: F401  导入即注册数据库工具
+from ..task.runner import run_tool
+from ..workflows import tools as workflow_tools  # noqa: F401  导入即把工作流注册为慢工具
 from .agent import stream_llm_res
 
 StepType = Literal["reasoning", "tool_call", "tool_result", "answer"]
@@ -38,6 +40,7 @@ def run_agent(
     每一步通过 step_callback 向外推送 AgentStep；messages 会在原地追加历史。
     """
     registry = get_registry()
+    tool_meta = get_tool_meta()
 
     def emit(step: AgentStep) -> None:
         if step_callback:
@@ -71,14 +74,16 @@ def run_agent(
 
             func = registry.get(name)
             if func is None:
-                result = f"工具 {name} 未注册"
+                result_str = f"工具 {name} 未注册"
             else:
-                try:
-                    result = func(**args)
-                except Exception as exc:  # noqa: BLE001
-                    result = f"工具 {name} 执行异常: {exc}"
+                meta = tool_meta.get(name, {})
+                result_str = run_tool(
+                    func,
+                    args,
+                    timeout=meta.get("timeout", 60.0),
+                    slow=meta.get("slow", False),
+                )
 
-            result_str = str(result)
             emit(AgentStep(type="tool_result", tool_name=name, tool_result=result_str))
             messages.append({"role": "tool", "tool_call_id": tc["id"], "content": result_str})
 
