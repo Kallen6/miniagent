@@ -168,29 +168,27 @@ header {
   font-size: 11px;
   font-weight: 700;
   color: var(--muted);
-  margin: 10px 0 6px 24px;
+  margin: 10px 0 6px 20px;
   letter-spacing: 0.03em;
 }
 
-/* 时间线节点 */
+/* 时间线节点卡片（变体一：左色条 + 彩色徽章 + 灰白内容区） */
 
 .tl-node {
   position: relative;
-  margin: 0 0 10px 0;
-  padding-left: 24px;
+  margin: 0 0 10px 20px;
+  padding: 10px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 8px;
 }
 
 .tl-node::before {
   content: "";
   position: absolute;
-  left: -8px;
-  top: 0;
-}
-
-.tl-icon {
-  position: absolute;
-  left: 2px;
-  top: 2px;
+  left: -19px;
+  top: 14px;
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -198,48 +196,60 @@ header {
   box-shadow: 0 0 0 2px var(--tl-line);
 }
 
-.tl-node.reasoning .tl-icon { background: #8b5cf6; }
-.tl-node.tool .tl-icon { background: #3b82f6; }
-.tl-node.result .tl-icon { background: #22c55e; }
-.tl-node.answer .tl-icon { background: #111827; }
+.tl-node.reasoning  { border-left-color: #8b5cf6; }
+.tl-node.reasoning::before { background: #8b5cf6; }
+.tl-node.toolcall   { border-left-color: #3b82f6; }
+.tl-node.toolcall::before { background: #3b82f6; }
+.tl-node.toolresult { border-left-color: #16a34a; }
+.tl-node.toolresult::before { background: #16a34a; }
+.tl-node.answer     { border-left-color: #111827; }
+.tl-node.answer::before { background: #111827; }
+.tl-node.error      { border-left-color: #ef4444; }
+.tl-node.error::before { background: #ef4444; }
 
 .tl-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 3px;
+  margin-bottom: 8px;
 }
 
-.tl-label {
-  font-size: 12px;
+.tl-badge {
+  font-size: 11px;
   font-weight: 600;
-  padding: 1px 8px;
+  line-height: 1;
+  padding: 4px 10px;
   border-radius: 999px;
-  background: #eef1f5;
-  color: var(--muted);
+  color: #fff;
+  background: var(--muted);
 }
 
-.tl-node.reasoning .tl-label { background: #ede9fe; color: #6d28d9; }
-.tl-node.tool .tl-label { background: #dbeafe; color: #1d4ed8; }
-.tl-node.result .tl-label { background: #dcfce7; color: #15803d; }
-.tl-node.answer .tl-label { background: #e5e7eb; color: #111827; }
+.tl-node.reasoning  .tl-badge { background: #8b5cf6; }
+.tl-node.toolcall   .tl-badge { background: #3b82f6; }
+.tl-node.toolresult .tl-badge { background: #16a34a; }
+.tl-node.answer     .tl-badge { background: #111827; }
+.tl-node.error      .tl-badge { background: #ef4444; }
 
 .tl-time { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .tl-body {
   max-height: 160px;
   overflow-y: auto;
-  background: #f8f9fb;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 6px 9px;
-  font-family: "Cascadia Code", Consolas, monospace;
-  font-size: 12px;
-  line-height: 1.5;
+  background: #f7f7f8;
+  border: 1px solid #ececef;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  line-height: 1.6;
   color: #374151;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+.tl-body.mono {
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 12px;
 }
 
 .tl-node.reasoning .tl-body { font-style: italic; color: #6b7280; }

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>侧边栏步骤卡片 · 设计稿</title>
+<style>
+:root {
+  --ink: #1f2329;
+  --muted: #8a919f;
+  --card-bg: #ffffff;
+  --body-bg: #f5f6f8;
+  --content-bg: #f7f7f8;      /* 卡片内容区：灰白 */
+  --content-border: #ececef;
+
+  /* 步骤类型色 */
+  --reasoning: #8b5cf6;  --reasoning-soft: #f3eefa;
+  --toolcall:   #3b82f6;  --toolcall-soft:   #eaf1fe;
+  --toolresult: #16a34a;  --toolresult-soft: #eaf7ef;
+  --answer:     #111827;  --answer-soft:     #ececed;
+  --error:      #ef4444;  --error-soft:      #fdecec;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  background: var(--body-bg);
+  color: var(--ink);
+}
+
+.page { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+
+.page-head h1 { font-size: 22px; margin: 0 0 6px; }
+.page-head p { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
+.page-head .tip {
+  font-size: 12px; color: var(--muted); background: #fff;
+  border: 1px dashed #d8dde5; border-radius: 8px; padding: 8px 12px;
+}
+
+section { margin-top: 40px; }
+section > h2 { font-size: 16px; margin: 0 0 4px; }
+section > p.desc { font-size: 12px; color: var(--muted); margin: 0 0 16px; }
+
+.demo {
+  border: 1px solid #e5e7eb; border-radius: 12px; background: #fff;
+  padding: 20px 20px; display: flex; flex-direction: column; gap: 12px;
+}
+
+/* ============ 卡片公共骨架 ============ */
+.card {
+  border-radius: 8px;
+  background: var(--card-bg);
+  padding: 10px 12px;
+}
+
+.card .head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.card .badge {
+  font-size: 11px; font-weight: 600; line-height: 1;
+  padding: 4px 10px; border-radius: 999px; color: #fff;
+}
+
+.card .time {
+  font-size: 11px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.card .body {
+  background: var(--content-bg);            /* 灰白内容区 */
+  border: 1px solid var(--content-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12.5px; line-height: 1.6;
+  white-space: pre-wrap; word-break: break-word;
+}
+
+.card .body.mono { font-family: "Cascadia Code", Consolas, monospace; font-size: 12px; }
+.card.reasoning .body { color: #5f6673; font-style: italic; }
+
+/* 类型色分配 */
+.card.reasoning  .badge { background: var(--reasoning); }
+.card.toolcall   .badge { background: var(--toolcall); }
+.card.toolresult .badge { background: var(--toolresult); }
+.card.answer     .badge { background: var(--answer); }
+.card.error      .badge { background: var(--error); }
+
+/* ============ 变体 1：左色条 ============ */
+.v1 .card { border: 1px solid #e5e7eb; border-left-width: 4px; }
+.v1 .card.reasoning  { border-left-color: var(--reasoning); }
+.v1 .card.toolcall   { border-left-color: var(--toolcall); }
+.v1 .card.toolresult { border-left-color: var(--toolresult); }
+.v1 .card.answer     { border-left-color: var(--answer); }
+.v1 .card.error      { border-left-color: var(--error); }
+
+/* ============ 变体 2：类型色整圈描边 ============ */
+.v2 .card { border: 1.5px solid; }
+.v2 .card.reasoning  { border-color: #d6c6f5; }
+.v2 .card.toolcall   { border-color: #bfd4fb; }
+.v2 .card.toolresult { border-color: #bce3cb; }
+.v2 .card.answer     { border-color: #d1d1d4; }
+.v2 .card.error      { border-color: #f6c6c6; }
+
+/* ============ 变体 3：顶部色带 ============ */
+.v3 .card { border: 1px solid #e5e7eb; border-top: 3px solid; }
+.v3 .card.reasoning  { border-top-color: var(--reasoning); }
+.v3 .card.toolcall   { border-top-color: var(--toolcall); }
+.v3 .card.toolresult { border-top-color: var(--toolresult); }
+.v3 .card.answer     { border-top-color: var(--answer); }
+.v3 .card.error      { border-top-color: var(--error); }
+
+/* ============ 时间线整合示意（变体1为例） ============ */
+.tl-demo {
+  border: 1px solid #e5e7eb; border-radius: 12px; background: #fff;
+  padding: 20px; max-width: 400px; position: relative;
+}
+.tl-demo::before {
+  content: ""; position: absolute; left: 29px; top: 32px; bottom: 32px;
+  width: 2px; background: #dfe3e8;
+}
+.tl-demo .round-title {
+  font-size: 11px; font-weight: 700; color: var(--muted); margin: 0 0 12px 16px;
+}
+.tl-demo .card { position: relative; margin-left: 14px; }
+.tl-demo .card::before {
+  content: ""; position: absolute; left: -20px; top: 14px;
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid #fff; box-shadow: 0 0 0 2px #dfe3e8;
+}
+.tl-demo .card.reasoning::before  { background: var(--reasoning); }
+.tl-demo .card.toolcall::before   { background: var(--toolcall); }
+.tl-demo .card.toolresult::before { background: var(--toolresult); }
+.tl-demo .card.answer::before     { background: var(--answer); }
+
+/* ============ 颜色规范表 ============ */
+table.spec { border-collapse: collapse; width: 100%; background: #fff; border-radius: 10px; overflow: hidden; font-size: 12.5px; }
+table.spec th, table.spec td { border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left; }
+table.spec th { background: #fafafa; color: var(--muted); font-weight: 600; }
+.swatch { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 6px; border: 1px solid rgba(0,0,0,.08); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-head">
+    <h1>侧边栏步骤卡片设计稿</h1>
+    <p>仅展示元素样式，无功能交互。三种变体使用同一组示例内容，方便对比。卡片均为「类型色包围 + 灰白内容区」。</p>
+    <div class="tip">说明：类型色只出现在「包围结构」（左色条 / 描边 / 顶带）与「类型徽章」上；正文内容统一落在灰白底色块中，保证长文本可读性。</div>
+  </div>
+
+  <!-- ============ 变体 1 ============ -->
+  <section>
+    <h2>变体一 · 左色条式</h2>
+    <p class="desc">卡片左侧 4px 类型色竖条 + 彩色徽章，整体边框浅灰。信息密度最高，颜色克制，适合默认方案。</p>
+    <div class="demo v1">
+      <div class="card reasoning">
+        <div class="head"><span class="badge">思考</span><span class="time">14:32:05</span></div>
+        <div class="body">用户想查看年龄等于 20 的用户名单。我应该调用 query_database 查询 users 表，只取 name 和 age 两个字段，避免返回多余数据。</div>
+      </div>
+      <div class="card toolcall">
+        <div class="head"><span class="badge">调用 query_database</span><span class="time">14:32:08</span></div>
+        <div class="body mono">{"db_url": "sqlite:///demo.db", "table": "users", "fields": ["name", "age"], "filters": {"age": 20}}</div>
+      </div>
+      <div class="card toolresult">
+        <div class="head"><span class="badge">结果 · query_database</span><span class="time">14:32:09</span></div>
+        <div class="body mono">{"table": "users", "rows": [["alice", 20]], "count": 1, "truncated": false}</div>
+      </div>
+      <div class="card answer">
+        <div class="head"><span class="badge">回答</span><span class="time">14:32:11</span></div>
+        <div class="body">查询到 1 名年龄为 20 岁的用户：alice。</div>
+      </div>
+      <div class="card error">
+        <div class="head"><span class="badge">异常</span><span class="time">14:32:12</span></div>
+        <div class="body mono">{"error": "timeout", "message": "工具执行超过 300s，已中止等待"}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 变体 2 ============ -->
+  <section>
+    <h2>变体二 · 类型色描边式</h2>
+    <p class="desc">整圈 1.5px 类型浅色描边包围灰白内容区，类型识别最直观，视觉稍重。</p>
+    <div class="demo v2">
+      <div class="card reasoning">
+        <div class="head"><span class="badge">思考</span><span class="time">14:32:05</span></div>
+        <div class="body">用户想查看年龄等于 20 的用户名单。我应该调用 query_database 查询 users 表，只取 name 和 age 两个字段，避免返回多余数据。</div>
+      </div>
+      <div class="card toolcall">
+        <div class="head"><span class="badge">调用 query_database</span><span class="time">14:32:08</span></div>
+        <div class="body mono">{"db_url": "sqlite:///demo.db", "table": "users", "fields": ["name", "age"], "filters": {"age": 20}}</div>
+      </div>
+      <div class="card toolresult">
+        <div class="head"><span class="badge">结果 · query_database</span><span class="time">14:32:09</span></div>
+        <div class="body mono">{"table": "users", "rows": [["alice", 20]], "count": 1, "truncated": false}</div>
+      </div>
+      <div class="card answer">
+        <div class="head"><span class="badge">回答</span><span class="time">14:32:11</span></div>
+        <div class="body">查询到 1 名年龄为 20 岁的用户：alice。</div>
+      </div>
+      <div class="card error">
+        <div class="head"><span class="badge">异常</span><span class="time">14:32:12</span></div>
+        <div class="body mono">{"error": "timeout", "message": "工具执行超过 300s，已中止等待"}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 变体 3 ============ -->
+  <section>
+    <h2>变体三 · 顶部色带式</h2>
+    <p class="desc">卡片顶部 3px 类型色横带，颜色存在感介于变体一与二之间，卡片顶部边界清晰。</p>
+    <div class="demo v3">
+      <div class="card reasoning">
+        <div class="head"><span class="badge">思考</span><span class="time">14:32:05</span></div>
+        <div class="body">用户想查看年龄等于 20 的用户名单。我应该调用 query_database 查询 users 表，只取 name 和 age 两个字段，避免返回多余数据。</div>
+      </div>
+      <div class="card toolcall">
+        <div class="head"><span class="badge">调用 query_database</span><span class="time">14:32:08</span></div>
+        <div class="body mono">{"db_url": "sqlite:///demo.db", "table": "users", "fields": ["name", "age"], "filters": {"age": 20}}</div>
+      </div>
+      <div class="card toolresult">
+        <div class="head"><span class="badge">结果 · query_database</span><span class="time">14:32:09</span></div>
+        <div class="body mono">{"table": "users", "rows": [["alice", 20]], "count": 1, "truncated": false}</div>
+      </div>
+      <div class="card answer">
+        <div class="head"><span class="badge">回答</span><span class="time">14:32:11</span></div>
+        <div class="body">查询到 1 名年龄为 20 岁的用户：alice。</div>
+      </div>
+      <div class="card error">
+        <div class="head"><span class="badge">异常</span><span class="time">14:32:12</span></div>
+        <div class="body mono">{"error": "timeout", "message": "工具执行超过 300s，已中止等待"}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 时间线整合示意 ============ -->
+  <section>
+    <h2>整合示意 · 时间线中的左色条卡片（变体一）</h2>
+    <p class="desc">示意卡片放入侧边栏时间线后的整体观感：左侧竖线 + 类型色圆点 + 色条卡片。</p>
+    <div class="tl-demo">
+      <div class="round-title">第 1 轮 · 14:32:05</div>
+      <div class="card reasoning">
+        <div class="head"><span class="badge">思考</span><span class="time">14:32:05</span></div>
+        <div class="body">用户想查看年龄等于 20 的用户名单，我应该调用 query_database……</div>
+      </div>
+      <div class="card toolcall">
+        <div class="head"><span class="badge">调用 query_database</span><span class="time">14:32:08</span></div>
+        <div class="body mono">{"table": "users", "fields": ["name", "age"], "filters": {"age": 20}}</div>
+      </div>
+      <div class="card toolresult">
+        <div class="head"><span class="badge">结果 · query_database</span><span class="time">14:32:09</span></div>
+        <div class="body mono">{"rows": [["alice", 20]], "count": 1}</div>
+      </div>
+      <div class="card answer">
+        <div class="head"><span class="badge">回答</span><span class="time">14:32:11</span></div>
+        <div class="body">查询到 1 名年龄为 20 岁的用户：alice。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 颜色规范 ============ -->
+  <section>
+    <h2>颜色规范</h2>
+    <table class="spec">
+      <tr><th>步骤类型</th><th>主色（徽章/色条）</th><th>含义</th></tr>
+      <tr><td>思考 reasoning</td><td><span class="swatch" style="background:#8b5cf6"></span>#8B5CF6 紫</td><td>模型的中间推理过程</td></tr>
+      <tr><td>调用 tool_call</td><td><span class="swatch" style="background:#3b82f6"></span>#3B82F6 蓝</td><td>发起一次工具 / 工作流调用</td></tr>
+      <tr><td>结果 tool_result</td><td><span class="swatch" style="background:#16a34a"></span>#16A34A 绿</td><td>工具执行返回的数据</td></tr>
+      <tr><td>回答 answer</td><td><span class="swatch" style="background:#111827"></span>#111827 墨</td><td>本轮最终结论</td></tr>
+      <tr><td>异常 error</td><td><span class="swatch" style="background:#ef4444"></span>#EF4444 红</td><td>超时 / 执行失败</td></tr>
+    </table>
+  </section>
+
+</div>
+</body>
+</html>

@@ -96,6 +96,12 @@ function appendNotice(text) {
 
 function showError(message) {
   messagesEl.appendChild(el("div", "bubble error", `出错了：${message}`));
+  if (round) {
+    const node = tlNode("error", "异常");
+    nodeBody(node, message);
+    round.roundEl.appendChild(node);
+    scrollTimeline();
+  }
   round = null;
   scrollBottom();
 }
@@ -117,18 +123,17 @@ function startRound() {
 
 /* ---------- 时间线节点 ---------- */
 
-function tlNode(cls, label, timeText) {
+function tlNode(cls, label) {
   const node = el("div", "tl-node " + cls);
-  node.appendChild(el("i", "tl-icon"));
   const head = el("div", "tl-head");
-  head.appendChild(el("span", "tl-label", label));
-  head.appendChild(el("span", "tl-time", timeText || now()));
+  head.appendChild(el("span", "tl-badge", label));
+  head.appendChild(el("span", "tl-time", now()));
   node.appendChild(head);
   return node;
 }
 
-function nodeBody(node, text) {
-  const body = el("div", "tl-body", text);
+function nodeBody(node, text, mono) {
+  const body = el("div", mono ? "tl-body mono" : "tl-body", text);
   node.appendChild(body);
   return body;
 }
@@ -149,19 +154,19 @@ function renderStep(step) {
   }
 
   if (step.type === "tool_call") {
-    const node = tlNode("tool", `调用 ${step.tool_name}`);
-    nodeBody(node, JSON.stringify(step.tool_args));
+    const node = tlNode("toolcall", `调用 ${step.tool_name}`);
+    nodeBody(node, JSON.stringify(step.tool_args), true);
     round.roundEl.appendChild(node);
     scrollTimeline();
     return;
   }
 
   if (step.type === "tool_result") {
-    const node = tlNode("result", `结果 · ${step.tool_name}`);
+    const node = tlNode("toolresult", `结果 · ${step.tool_name}`);
     const text = step.tool_result.length > 600
       ? step.tool_result.slice(0, 600) + " …"
       : step.tool_result;
-    nodeBody(node, text);
+    nodeBody(node, text, true);
     round.roundEl.appendChild(node);
     scrollTimeline();
     return;
