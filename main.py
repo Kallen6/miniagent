@@ -2,8 +2,14 @@
 
 运行后访问 http://127.0.0.1:8008
 """
+import logging
+
 import uvicorn
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    )
     # 显式指定 WS 实现，避免 auto 探测失败时静默禁用 WebSocket（握手 404）
     uvicorn.run("agent.web.app:app", host="127.0.0.1", port=8008, ws="websockets-sansio")

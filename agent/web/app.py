@@ -1,5 +1,6 @@
 """Web 对话页：WS 长连接实时推送 AgentStep，HTTP 提供页面与元信息。"""
 import asyncio
+import logging
 from pathlib import Path
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -11,7 +12,10 @@ from ..llm.agent import create_llm, system_msg, user_msg
 from ..llm.agent_loop import run_agent
 from ..llm.prompts import list_roles
 from ..service.async_api import router as api_router
+from ..service.security import ws_check, ws_rate_ok
 from ..workflows import list_workflows
+
+logger = logging.getLogger("miniagent")
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
@@ -47,7 +51,12 @@ async def ws_chat(ws: WebSocket):
     """聊天长连接：收 {message, role}，逐条推 {type: step|done|error}。
 
     同角色下沿用会话历史；切换角色即重置历史（system 提示词不同）。
+    握手时鉴权 + 限流（X-API-Key 头或 ?api_key= 查询参数）；未配置 key 时放行。
     """
+    ident = ws_check(ws)
+    if ident is None:
+        await ws.close(code=1008, reason="无效的 API Key 或请求过于频繁")
+        return
     await ws.accept()
     loop = asyncio.get_running_loop()
     messages: list[dict] = []
@@ -60,6 +69,9 @@ async def ws_chat(ws: WebSocket):
             role = str(data.get("role") or "default")
             if not message:
                 await ws.send_json({"type": "error", "message": "消息不能为空"})
+                continue
+            if not ws_rate_ok(ident):
+                await ws.send_json({"type": "error", "message": "请求过于频繁，请稍后再试"})
                 continue
 
             if role != current_role:
@@ -97,6 +109,7 @@ async def ws_chat(ws: WebSocket):
             try:
                 result = await fut
             except Exception as exc:  # noqa: BLE001
+                logger.exception("WS 会话 agent 执行失败")
                 await send_task
                 await ws.send_json({"type": "error", "message": f"agent 执行失败: {exc}"})
                 continue

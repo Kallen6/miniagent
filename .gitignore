@@ -30,17 +30,23 @@ Thumbs.db
 *.log
 logs/
 
+# Local browser launch config (contains machine-specific paths)
+CdpTools/capture/_launch_config.json
+
 # Dev-notes / phase summaries (not shipped code)
 mkd/
 
 # SQLite demo databases (runtime artifacts)
 *.db
 *.db-journal
+*.db-wal
+*.db-shm
 *.sqlite
 *.sqlite3
 
+# Runtime task store (agent/service/task_store.py)
+agent/data/
 
 mkd/
-tests/
 
 .codebuddy/
