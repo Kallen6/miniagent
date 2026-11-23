@@ -21,13 +21,29 @@
 
 以下截图由 `demo/` 演示流程产生（演示台词与截图清单见 [demo/README.md](demo/README.md)）。
 
-| 主界面 | 执行时间线 |
-|---|---|
-| ![主界面](docs/images/web-main.png) | ![时间线](docs/images/timeline.png) |
+### 主界面
 
-| 工作流执行 | 角色切换 |
-|---|---|
-| ![工作流](docs/images/demo-workflow.png) | ![角色](docs/images/roles.png) |
+左侧对话区 + 右侧执行时间线，顶栏可切换角色：
+
+![主界面](docs/images/web-main.png)
+
+### 执行时间线
+
+紫色思考（流式）、蓝色调用、绿色结果、黑色回答，四类卡片实时推送：
+
+![时间线](docs/images/timeline.png)
+
+### 工作流执行
+
+LLM 编排 `weather_brief` 慢工具，展示长任务的调用与结果卡片：
+
+![工作流](docs/images/demo-workflow.png)
+
+### 角色切换
+
+切换 `data_analyst` 角色后重置会话并更换提示词：
+
+![角色](docs/images/roles.png)
 
 ## 架构
 
