@@ -9,3 +9,4 @@ dist/
 logs/
 .DS_Store
 Thumbs.db
+capture/_launch_config.json
