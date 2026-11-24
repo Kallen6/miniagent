@@ -7,6 +7,7 @@ from typing import Callable, Literal
 
 from ..agent_tools.build_tools import get_registry, get_tool_meta
 from ..dbase import query_database  # noqa: F401  导入即注册数据库工具
+from ..fs import file_ops  # noqa: F401  导入即注册文件 CRUD 工具（沙箱限制见 agent/fs/sandbox.py）
 from ..task.runner import run_tool
 from ..workflows import tools as workflow_tools  # noqa: F401  导入即把工作流注册为慢工具
 from .agent import stream_llm_res

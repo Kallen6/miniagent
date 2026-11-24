@@ -116,6 +116,9 @@ miniagent/
 │   │   └── command_exec.py     # 执行 shell 命令（本地示例，未注册进工具表）
 │   ├── dbase/
 │   │   └── db_query.py         # SQLAlchemy 通用查询工具（标识符校验 + 参数绑定 + 行数限量）
+│   ├── fs/
+│   │   ├── sandbox.py          # 路径沙箱：白名单根目录 + 逃逸/符号链接拦截 + 敏感文件黑名单
+│   │   └── file_ops.py         # 受限文件 CRUD 工具（读/写/编辑/删除/列目录，public=False）
 │   ├── workflows/
 │   │   ├── registry.py         # @workflow 注册 + run_workflow 调度
 │   │   └── demo_workflow.py    # 示例工作流（text_upper / text_stats）
@@ -150,6 +153,8 @@ miniagent/
 |---|---|
 | `agent_tools/build_tools.py` | `@tool` 装饰器：从类型注解自动生成 function-calling Schema 并注册；`get_tools(include_private=...)` / `get_registry()` |
 | `dbase/db_query.py` | `query_database(db_url, table, fields, filters, limit)` 通用查询，`@tool` 注册，标识符校验 + 参数绑定 + 行数限量 |
+| `fs/sandbox.py` | `check_path(path, for_write)` 路径沙箱：`AGENT_FS_ROOTS` 白名单 + resolve 逃逸拦截 + 敏感文件黑名单；skills/插件复用同一校验 |
+| `fs/file_ops.py` | `file_read / file_write / file_edit / file_delete / file_list` 五个受限文件工具，`public=False` 仅本地会话可见，删除移动到 `.trash/` 可恢复 |
 | `workflows/` | `@workflow` 注册短固定工作流，`run_workflow(name, **kwargs)` 统一调度；自动包装为慢工具（300s 超时） |
 | `llm/agent_loop.py` | `run_agent()` 多轮循环：流式输出 → 解析 tool_calls → 执行 → 回填；参数错误回填重试；协作式取消（`cancel_event`） |
 | `llm/context.py` | `trim_messages()` 字符预算裁剪（默认 30000），保证 tool 配对；`summarize_fn` 摘要压缩开关 |
@@ -224,6 +229,7 @@ python tests/test_phase4_6_smoke.py                   # 服务冒烟测试（自
 - [x] 对外异步服务接口（`agent/service`）：SQLite 持久化 + 取消 + 并发上限 + 鉴权限流
 - [x] 上下文管理：字符预算裁剪 + 可选摘要压缩（`summarizer` 参数）
 - [x] 意图识别真实实现（`AGENT_INTENT_ROUTING=1` 启用路由）
+- [x] 文件 CRUD 工具 + 路径沙箱（`agent/fs`）：白名单根目录、逃逸拦截、敏感文件黑名单、大小限制
 - [ ] 前端逻辑测试与 CI
 
 ## demo：前端演示
@@ -257,6 +263,13 @@ tab.group("demo").element("search_input").input_text("hello")
 完整说明（元素库格式、API 速查、多进程规则、常见问题）见 [`CdpTools/README.md`](CdpTools/README.md)。
 
 ## 更新日志
+
+### 2026.11.24 文件 CRUD 与路径沙箱
+
+- 新增 `agent/fs/sandbox.py`：`check_path()` 路径沙箱（`AGENT_FS_ROOTS` 白名单、`../` 与符号链接逃逸拦截、`.env`/`.db`/密钥等敏感文件黑名单），供文件工具与未来 skills/插件共用
+- 新增 `agent/fs/file_ops.py`：`file_read`（行号分页）/ `file_write`（覆盖/追加）/ `file_edit`（唯一匹配替换）/ `file_delete`（移入 `.trash/`）/ `file_list`（glob 过滤）五个工具，默认 `public=False`
+- 新增配置：`AGENT_FS_ROOTS` / `AGENT_FS_MAX_READ_BYTES` / `AGENT_FS_MAX_WRITE_BYTES`（见 `.env.example`）
+- 新增 `tests/test_file_ops.py`：28 个用例覆盖逃逸拦截与 CRUD 全流程
 
 ### 2026.11.23 文档与演示
 
